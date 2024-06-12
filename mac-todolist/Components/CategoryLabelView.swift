@@ -20,6 +20,8 @@ struct CategoryLabelView: View {
                 .frame(width: circleSize, height: circleSize)
                 .foregroundColor(color)
             Text(category)
+                .foregroundStyle(TintShapeStyle())
+                .tint(.secondary)
         }
     }
 }

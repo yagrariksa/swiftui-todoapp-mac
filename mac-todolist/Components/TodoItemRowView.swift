@@ -27,15 +27,7 @@ struct TodoItemRowView: View {
                 Text("Design Interface")
                     .font(.system(size: 14))
                 
-                HStack(alignment: .center, spacing: 3) {
-                    Image(systemName: "circle.fill")
-                        .resizable()
-                        .frame(width: 6, height: 6)
-                        .foregroundColor(color ?? .green)
-                    Text("Categories")
-                        .foregroundStyle(TintShapeStyle())
-                        .tint(.gray)
-                }
+                CategoryLabelView(circleSize: 6, category: $category, color: .constant(color ?? .green))
             }
         }
         .padding(.horizontal, 8)

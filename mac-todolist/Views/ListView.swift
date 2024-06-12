@@ -118,9 +118,9 @@ extension ListView {
             content
                 .padding(.horizontal, 18)
                 .padding(.vertical, 11.5)
-                .background(LinearGradient(colors: [.white, .white], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .background(LinearGradient(colors: [ Color(nsColor: .controlBackgroundColor)], startPoint: .topLeading, endPoint: .bottomTrailing))
                 .cornerRadius(8)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
         }
     }
 }

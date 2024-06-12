@@ -12,6 +12,12 @@ struct mac_todolistApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .frame(
+                    minWidth: 400,
+                    maxWidth: .infinity,
+                    minHeight: 400,
+                    maxHeight: .infinity
+                )
         }
     }
 }

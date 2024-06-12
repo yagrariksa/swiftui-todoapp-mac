@@ -11,6 +11,7 @@
 		40310CEB2C19DCBE00F9C63B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40310CEA2C19DCBE00F9C63B /* ContentView.swift */; };
 		40310CED2C19DCBF00F9C63B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40310CEC2C19DCBF00F9C63B /* Assets.xcassets */; };
 		40310CF02C19DCBF00F9C63B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 40310CEF2C19DCBF00F9C63B /* Preview Assets.xcassets */; };
+		40310CF82C19DDDC00F9C63B /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40310CF72C19DDDC00F9C63B /* ListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		40310CEC2C19DCBF00F9C63B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		40310CEF2C19DCBF00F9C63B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		40310CF12C19DCBF00F9C63B /* mac_todolist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mac_todolist.entitlements; sourceTree = "<group>"; };
+		40310CF72C19DDDC00F9C63B /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 		40310CE72C19DCBE00F9C63B /* mac-todolist */ = {
 			isa = PBXGroup;
 			children = (
+				40310CFA2C19DF6800F9C63B /* Views */,
 				40310CE82C19DCBE00F9C63B /* mac_todolistApp.swift */,
 				40310CEA2C19DCBE00F9C63B /* ContentView.swift */,
 				40310CEC2C19DCBF00F9C63B /* Assets.xcassets */,
@@ -67,6 +70,14 @@
 				40310CEF2C19DCBF00F9C63B /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		40310CFA2C19DF6800F9C63B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				40310CF72C19DDDC00F9C63B /* ListView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,6 +152,7 @@
 			files = (
 				40310CEB2C19DCBE00F9C63B /* ContentView.swift in Sources */,
 				40310CE92C19DCBE00F9C63B /* mac_todolistApp.swift in Sources */,
+				40310CF82C19DDDC00F9C63B /* ListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

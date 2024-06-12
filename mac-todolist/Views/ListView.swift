@@ -10,9 +10,6 @@ import Combine
 
 struct ListView: View {
     
-    
-    @State private var selectedCategory: Int = 0
-    
     @FocusState private var focusView: FocusView?
     
     @ObservedObject private var viewModel = ListViewModel()
@@ -24,25 +21,41 @@ struct ListView: View {
                     Text(category)
                         .tag(category)
                 }
-            } label: {
-                
-            }
+            } label: { }
 
-            TextField("Writing Articles", text: $viewModel.input)
-                .onKeyPress(action: viewModel.handler(keyPress:))
-                .focused($focusView, equals: .field)
+            textField
             
             VStack {
                 List(selection: $viewModel.suggestion_todos_selection) {
-                    ForEach(viewModel.suggestions, id: \.self) { suggestion in
-                        Text(suggestion)
-                            .tag(suggestion)
+                    switch viewModel.suggestionMode {
+                    case .todo:
+                        ForEach(viewModel.filteredTodos, id: \.self) { suggestion in
+                            Text(suggestion)
+                                .frame(height: 36)
+                                .listRowSeparator(.hidden, edges: .all)
+                                .tag(suggestion)
+                        }
+                        
+                    case .category:
+                        ForEach(viewModel.filteredCategoriesSuggestions, id: \.self) { suggestion in
+                            CategoryLabelView(category: .constant(suggestion), color: .constant(.green))
+                                .frame(height: 36)
+                                .listRowSeparator(.hidden, edges: .all)
+                                .tag(suggestion)
+                        }
+                        
+                        if viewModel.categoryInput != "" {
+                            Text("Create \"\(viewModel.categoryInput)\"")
+                                .foregroundStyle(TintShapeStyle())
+                                .tint(.secondary)
+                                .tag(viewModel.categoryInput)
+                        }
                     }
                 }
+                .scrollIndicators(.automatic)
                 .cornerRadius(8)
-                .shadow(radius: 64)
                 .focused($focusView, equals: .suggestion)
-                .onKeyPress(action: viewModel.suggestionHandler(keyPress:))
+                .onKeyPress(action: suggestionHandler(keyPress:))
             }
             .padding(.top, 16)
             
@@ -50,78 +63,22 @@ struct ListView: View {
         .onChange(of: viewModel.focusView, { focusView = viewModel.focusView})
     }
     
+    @ViewBuilder
+    var textField: some View {
+        VStack {
+            TextField("Writing Articles", text: $viewModel.todoInput)
+                .onKeyPress(action: fieldHandler(keyPress:))
+                .focused($focusView, equals: .field)
+                .textFieldStyle(.plain)
+                .font(.system(size: 14))
+        }
+        .modifier(textViewModifier())
+    }
 }
 
 extension ListView {
-    enum FocusView: Hashable, Equatable {
-        case noFocus
-        case field
-        case suggestion
-    }
-}
-
-class ListViewModel: ObservableObject {
-    
-    @Published var selectedCategory: String = "A"
-    @Published var input: String = ""
-    @Published private (set) var focusView: ListView.FocusView?
-    @Published var suggestion_todos_selection: String = ""
-    @Published private (set) var suggestionMode: SuggestionMode = .todo
-    
-    var suggestions: [String] {
-        switch suggestionMode {
-        case .todo:
-            return filteredTodos
-        case .category:
-            return filteredCategoriesSuggestions
-        }
-    }
-    
-    var filteredCategoriesSuggestions: [String] {
-        let splitted = input.split(separator: "@")
-        guard splitted.count > 1,
-              let keyword = splitted.last
-        else { return categories }
-        
-        return categories.filter({ $0.lowercased().contains(keyword.lowercased()) })
-    }
-    
-    var filteredTodos: [String] {
-        guard input != "" else { return todos }
-        return todos.filter({ $0.lowercased().contains(input.lowercased()) })
-    }
-    
-    var categories: [String] = ["A", "B", "C"]
-    
-    var todos: [String] = [
-        "Writing Article",
-        "Cooking Dinner",
-        "Running 5K",
-        "Finishing Homework"
-    ]
-    
-    private var cancellable = Set<AnyCancellable>()
-    
-    init() {
-        $input
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .sink { [weak self] string in
-                guard let weakSelf = self else { return }
-                if weakSelf.suggestionMode == .category && string.last == Character(" ") {
-                    weakSelf.suggestionMode = .todo
-                    return
-                }
-                if string.last == Character("@") {
-                    weakSelf.suggestionMode = .category
-                    print("Switch suggestion")
-                } else {
-                    print(string)
-                }
-            }
-            .store(in: &cancellable)
-    }
-    
-    func handler(keyPress: KeyPress) -> KeyPress.Result {
+    private func fieldHandler(keyPress: KeyPress) -> KeyPress.Result {
+        guard keyPress.phase == .down else { return .ignored }
         switch keyPress.key {
         case .upArrow:
             return .handled
@@ -133,32 +90,138 @@ class ListViewModel: ObservableObject {
         }
     }
     
-    func suggestionHandler(keyPress: KeyPress) -> KeyPress.Result {
+    private func suggestionHandler(keyPress: KeyPress) -> KeyPress.Result {
         guard focusView == .suggestion else { return .ignored }
         
         if keyPress.key == .return {
-            handleSuggestion()
+            viewModel.handleSuggestion()
             focusView = .field
             return .handled
-        }  else if keyPress.key == .upArrow && suggestion_todos_selection == categories.first {
+        }  else if keyPress.key == .upArrow && viewModel.suggestion_todos_selection == viewModel.suggestions.first {
             focusView = .field
             return .ignored
         } else {
             return .ignored
         }
     }
+}
+
+extension ListView {
+    enum FocusView: Hashable, Equatable {
+        case noFocus
+        case field
+        case suggestion
+    }
     
-    private func handleSuggestion() {
+    struct textViewModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .padding(.horizontal, 18)
+                .padding(.vertical, 11.5)
+                .background(LinearGradient(colors: [.white, .white], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .cornerRadius(8)
+                .foregroundColor(.black)
+        }
+    }
+}
+
+class ListViewModel: ObservableObject {
+    
+    @Published var selectedCategory: String = "A"
+    @Published var todoInput: String = "" {
+        didSet {
+            let splitted = todoInput.split(separator: "@")
+            guard splitted.count > 1 || todoInput.firstIndex(of: "@") == todoInput.startIndex,
+                  let keyword = splitted.last
+            else {
+                if categoryInput != "" { categoryInput = "" }
+                return
+            }
+            
+            categoryInput = String(keyword)
+        }
+    }
+    @Published private (set) var focusView: ListView.FocusView?
+    @Published var suggestion_todos_selection: String = ""
+    @Published private (set) var suggestionMode: SuggestionMode = .todo
+    
+    @Published var categoryInput: String = ""
+    
+    var suggestions: [String] {
         switch suggestionMode {
         case .todo:
-            input = suggestion_todos_selection
+            return filteredTodos
         case .category:
+            return filteredCategoriesSuggestions
+        }
+    }
+    
+    var filteredCategoriesSuggestions: [String] {
+        let splitted = todoInput.split(separator: "@")
+        guard splitted.count > 1,
+              let keyword = splitted.last
+        else { return categories }
+        
+        return categories.filter({ $0.lowercased().contains(keyword.lowercased()) })
+    }
+    
+    var filteredTodos: [String] {
+        guard todoInput != "" else { return todos }
+        return todos.filter({ $0.lowercased().contains(todoInput.lowercased()) })
+    }
+    
+    var categories: [String] = ["A", "B", "C"]
+    
+    var todos: [String] = [
+        "Writing Article",
+        "Cooking Dinner",
+        "Running 5K",
+        "Finishing Homework",
+        "Reading Book",
+        "Lorem Ipsum",
+        "Dolor sit",
+        "Amet",
+        "Another Thing",
+        "Cycling",
+        "Swimming",
+        "Coding"
+    ]
+    
+    private var cancellable = Set<AnyCancellable>()
+    
+    init() {
+        $todoInput
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .sink { [weak self] string in
+                guard let weakSelf = self else { return }
+                if weakSelf.suggestionMode == .category &&
+                    (string.last == Character(" ") || !string.contains("@"))
+                {
+                    weakSelf.suggestionMode = .todo
+                    return
+                }
+                if string.last == Character("@") {
+                    weakSelf.suggestionMode = .category
+                    print("Switch suggestion")
+                }
+            }
+            .store(in: &cancellable)
+    }
+    
+    func handleSuggestion() {
+        switch suggestionMode {
+        case .todo:
+            todoInput = suggestion_todos_selection
+        case .category:
+            if !categories.contains(where: {$0 == suggestion_todos_selection}) {
+                categories.append(suggestion_todos_selection)
+            }
             selectedCategory = suggestion_todos_selection
-            var splitter = input.split(separator: "@")
-            if splitter.count > 1 {
+            var splitter = todoInput.split(separator: "@")
+            if splitter.count > 1 || todoInput.firstIndex(of: "@") == todoInput.startIndex {
                 splitter.removeLast()
             }
-            input = splitter.joined()
+            todoInput = splitter.joined()
         }
     }
 }
@@ -172,6 +235,6 @@ extension ListViewModel {
 
 #Preview {
     ListView()
-        .padding(.all, 64)
+        .padding(.all, 32)
         .frame(width: 400, height: 600)
 }

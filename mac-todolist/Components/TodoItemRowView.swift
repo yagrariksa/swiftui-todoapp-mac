@@ -33,7 +33,7 @@ struct TodoItemRowView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 10)
         .background(TintShapeStyle())
-        .tint(.white)
+        .tint(.clear)
         .cornerRadius(4)
         
     }

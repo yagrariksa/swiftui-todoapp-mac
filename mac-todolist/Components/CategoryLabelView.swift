@@ -23,6 +23,7 @@ struct CategoryLabelView: View {
                 .foregroundStyle(TintShapeStyle())
                 .tint(.secondary)
         }
+        .padding(.horizontal, 8)
     }
 }
 

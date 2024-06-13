@@ -14,6 +14,10 @@
 		40310CF82C19DDDC00F9C63B /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40310CF72C19DDDC00F9C63B /* ListView.swift */; };
 		40310CFD2C19FFE600F9C63B /* TodoItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40310CFC2C19FFE600F9C63B /* TodoItemRowView.swift */; };
 		40310CFF2C1A040800F9C63B /* CategoryLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40310CFE2C1A040800F9C63B /* CategoryLabelView.swift */; };
+		40C35BAF2C1B3424005CE0C5 /* ListViewModel+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C35BAE2C1B3424005CE0C5 /* ListViewModel+Protocol.swift */; };
+		40C35BB12C1B3435005CE0C5 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C35BB02C1B3435005CE0C5 /* ListViewModel.swift */; };
+		40C35BB32C1B3455005CE0C5 /* ListViewModel+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C35BB22C1B3455005CE0C5 /* ListViewModel+Mock.swift */; };
+		40C35BB62C1B3808005CE0C5 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C35BB52C1B3808005CE0C5 /* TodoItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 		40310CF72C19DDDC00F9C63B /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		40310CFC2C19FFE600F9C63B /* TodoItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemRowView.swift; sourceTree = "<group>"; };
 		40310CFE2C1A040800F9C63B /* CategoryLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryLabelView.swift; sourceTree = "<group>"; };
+		40C35BAE2C1B3424005CE0C5 /* ListViewModel+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListViewModel+Protocol.swift"; sourceTree = "<group>"; };
+		40C35BB02C1B3435005CE0C5 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
+		40C35BB22C1B3455005CE0C5 /* ListViewModel+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListViewModel+Mock.swift"; sourceTree = "<group>"; };
+		40C35BB52C1B3808005CE0C5 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +66,10 @@
 		40310CE72C19DCBE00F9C63B /* mac-todolist */ = {
 			isa = PBXGroup;
 			children = (
+				40C35BB42C1B3800005CE0C5 /* Models */,
 				40310CFB2C19FFC900F9C63B /* Components */,
 				40310CFA2C19DF6800F9C63B /* Views */,
+				40C35BAD2C1B3409005CE0C5 /* ViewModels */,
 				40310CE82C19DCBE00F9C63B /* mac_todolistApp.swift */,
 				40310CEA2C19DCBE00F9C63B /* ContentView.swift */,
 				40310CEC2C19DCBF00F9C63B /* Assets.xcassets */,
@@ -92,6 +102,24 @@
 				40310CFE2C1A040800F9C63B /* CategoryLabelView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		40C35BAD2C1B3409005CE0C5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				40C35BAE2C1B3424005CE0C5 /* ListViewModel+Protocol.swift */,
+				40C35BB02C1B3435005CE0C5 /* ListViewModel.swift */,
+				40C35BB22C1B3455005CE0C5 /* ListViewModel+Mock.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		40C35BB42C1B3800005CE0C5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				40C35BB52C1B3808005CE0C5 /* TodoItem.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,8 +192,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40C35BB32C1B3455005CE0C5 /* ListViewModel+Mock.swift in Sources */,
+				40C35BB62C1B3808005CE0C5 /* TodoItem.swift in Sources */,
 				40310CFD2C19FFE600F9C63B /* TodoItemRowView.swift in Sources */,
 				40310CEB2C19DCBE00F9C63B /* ContentView.swift in Sources */,
+				40C35BB12C1B3435005CE0C5 /* ListViewModel.swift in Sources */,
+				40C35BAF2C1B3424005CE0C5 /* ListViewModel+Protocol.swift in Sources */,
 				40310CE92C19DCBE00F9C63B /* mac_todolistApp.swift in Sources */,
 				40310CF82C19DDDC00F9C63B /* ListView.swift in Sources */,
 				40310CFF2C1A040800F9C63B /* CategoryLabelView.swift in Sources */,

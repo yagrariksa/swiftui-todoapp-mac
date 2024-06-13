@@ -8,11 +8,15 @@
 import SwiftUI
 import Combine
 
-struct ListView: View {
+struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol {
     
     @FocusState private var focusView: FocusView?
     
-    @ObservedObject private var viewModel = ListViewModel()
+    @ObservedObject private var viewModel: ViewModel
+    
+    init(viewModel: ViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
@@ -29,11 +33,11 @@ struct ListView: View {
                 List(selection: $viewModel.suggestion_todos_selection) {
                     switch viewModel.suggestionMode {
                     case .todo:
-                        ForEach(viewModel.filteredTodos, id: \.self) { suggestion in
-                            Text(suggestion)
+                        ForEach(viewModel.filteredTodos, id: \.id) { suggestion in
+                            Text(suggestion.title)
                                 .frame(height: 36)
                                 .listRowSeparator(.hidden, edges: .all)
-                                .tag(suggestion)
+                                .tag(suggestion.title)
                         }
                         
                     case .category:
@@ -60,7 +64,6 @@ struct ListView: View {
             .padding(.top, 16)
             
         }
-        .onChange(of: viewModel.focusView, { focusView = viewModel.focusView})
     }
     
     @ViewBuilder
@@ -125,116 +128,11 @@ extension ListView {
     }
 }
 
-class ListViewModel: ObservableObject {
-    
-    @Published var selectedCategory: String = "A"
-    @Published var todoInput: String = "" {
-        didSet {
-            let splitted = todoInput.split(separator: "@")
-            guard splitted.count > 1 || todoInput.firstIndex(of: "@") == todoInput.startIndex,
-                  let keyword = splitted.last
-            else {
-                if categoryInput != "" { categoryInput = "" }
-                return
-            }
-            
-            categoryInput = String(keyword)
-        }
-    }
-    @Published private (set) var focusView: ListView.FocusView?
-    @Published var suggestion_todos_selection: String = ""
-    @Published private (set) var suggestionMode: SuggestionMode = .todo
-    
-    @Published var categoryInput: String = ""
-    
-    var suggestions: [String] {
-        switch suggestionMode {
-        case .todo:
-            return filteredTodos
-        case .category:
-            return filteredCategoriesSuggestions
-        }
-    }
-    
-    var filteredCategoriesSuggestions: [String] {
-        let splitted = todoInput.split(separator: "@")
-        guard splitted.count > 1,
-              let keyword = splitted.last
-        else { return categories }
-        
-        return categories.filter({ $0.lowercased().contains(keyword.lowercased()) })
-    }
-    
-    var filteredTodos: [String] {
-        guard todoInput != "" else { return todos }
-        return todos.filter({ $0.lowercased().contains(todoInput.lowercased()) })
-    }
-    
-    var categories: [String] = ["A", "B", "C"]
-    
-    var todos: [String] = [
-        "Writing Article",
-        "Cooking Dinner",
-        "Running 5K",
-        "Finishing Homework",
-        "Reading Book",
-        "Lorem Ipsum",
-        "Dolor sit",
-        "Amet",
-        "Another Thing",
-        "Cycling",
-        "Swimming",
-        "Coding"
-    ]
-    
-    private var cancellable = Set<AnyCancellable>()
-    
-    init() {
-        $todoInput
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .sink { [weak self] string in
-                guard let weakSelf = self else { return }
-                if weakSelf.suggestionMode == .category &&
-                    (string.last == Character(" ") || !string.contains("@"))
-                {
-                    weakSelf.suggestionMode = .todo
-                    return
-                }
-                if string.last == Character("@") {
-                    weakSelf.suggestionMode = .category
-                    print("Switch suggestion")
-                }
-            }
-            .store(in: &cancellable)
-    }
-    
-    func handleSuggestion() {
-        switch suggestionMode {
-        case .todo:
-            todoInput = suggestion_todos_selection
-        case .category:
-            if !categories.contains(where: {$0 == suggestion_todos_selection}) {
-                categories.append(suggestion_todos_selection)
-            }
-            selectedCategory = suggestion_todos_selection
-            var splitter = todoInput.split(separator: "@")
-            if splitter.count > 1 || todoInput.firstIndex(of: "@") == todoInput.startIndex {
-                splitter.removeLast()
-            }
-            todoInput = splitter.joined()
-        }
-    }
-}
 
-extension ListViewModel {
-    enum SuggestionMode {
-        case todo
-        case category
-    }
-}
 
 #Preview {
-    ListView()
+    ListView(viewModel: MockListViewModel())
         .padding(.all, 32)
         .frame(width: 400, height: 600)
 }
+

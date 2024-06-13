@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        ListView()
+        ListView(viewModel: ListViewModel())
             .padding(.all, 32.0)
     }
 }

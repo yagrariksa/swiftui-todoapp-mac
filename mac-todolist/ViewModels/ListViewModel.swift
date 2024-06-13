@@ -44,7 +44,7 @@ class ListViewModel: ListViewModelProtocol {
     
     var filteredCategoriesSuggestions: [String] {
         let splitted = todoInput.split(separator: "@")
-        guard splitted.count > 1,
+        guard splitted.count > 1 || todoInput.firstIndex(of: "@") == todoInput.startIndex,
               let keyword = splitted.last
         else { return categories }
         
@@ -79,6 +79,7 @@ class ListViewModel: ListViewModelProtocol {
             .store(in: &cancellable)
         
         populateData()
+        suggestion_todos_selection = todos.first?.title ?? ""
     }
     
     func handleSuggestion() {

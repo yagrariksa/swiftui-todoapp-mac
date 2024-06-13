@@ -24,7 +24,7 @@ struct TodoItemRowView: View {
             .buttonStyle(.plain)
             
             VStack(alignment: .leading, spacing: 2) {
-                Text("Design Interface")
+                Text(title)
                     .font(.system(size: 14))
                 
                 CategoryLabelView(circleSize: 6, category: $category, color: .constant(color ?? .green))

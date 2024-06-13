@@ -14,6 +14,8 @@ struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol {
     
     @ObservedObject private var viewModel: ViewModel
     
+    @State private var todoSelection: String = ""
+    
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
     }
@@ -32,19 +34,24 @@ struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol {
             ZStack(alignment: .top) {
                 
                 if viewModel.todoInput != "" {
-                    suggestionBox
-                        .frame(maxHeight: 200)
-                        .zIndex(2)
+                    if (viewModel.suggestionMode == .todo && viewModel.suggestions.count > 0) || (viewModel.suggestionMode == .category) {
+                        suggestionBox
+                            .frame(maxHeight: 200)
+                            .zIndex(2)
+                    }
                 }
                 
-                List {
+                List(selection: $todoSelection) {
                     ForEach($viewModel.todos, id: \.id) { todo in
                         TodoItemRowView(title: todo.title,
                                         category: todo.category,
                                         checked: todo.finished,
                                         color: todo.categoryColor)
+                        .tag(todo.id.wrappedValue)
                     }
                 }
+                .onKeyPress(action: todoHandler(keyPress:))
+                .focused($focusView, equals: .todo)
                 .scrollIndicators(.automatic)
                 .cornerRadius(8)
                 .zIndex(1)
@@ -110,11 +117,20 @@ extension ListView {
         case .upArrow:
             return .handled
         case .downArrow:
-            focusView = .suggestion
+            focusView = (viewModel.todoInput == "" || (viewModel.suggestions.count == 0 && viewModel.suggestionMode == .todo)) ? .todo : .suggestion
             return .handled
         default:
             return .ignored
         }
+    }
+    
+    private func todoHandler(keyPress: KeyPress) -> KeyPress.Result {
+        guard focusView == .todo,
+              keyPress.key == .upArrow && todoSelection == viewModel.todos.first?.id
+        else { return .ignored }
+        
+        focusView = .field
+        return .handled
     }
     
     private func suggestionHandler(keyPress: KeyPress) -> KeyPress.Result {
@@ -138,6 +154,7 @@ extension ListView {
         case noFocus
         case field
         case suggestion
+        case todo
     }
     
     struct textViewModifier: ViewModifier {

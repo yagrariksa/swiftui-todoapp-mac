@@ -33,6 +33,11 @@ class ListViewModel: ListViewModelProtocol {
    
     @Published var suggestion_todos_selection: String = ""
     
+    @Published var todoSelection: String = ""
+    
+    @Published var showTodoDropdown: Bool = false
+    @Published var dropdownSelection: String = ""
+    
     var suggestions: [String] {
         switch suggestionMode {
         case .todo:
@@ -64,16 +69,20 @@ class ListViewModel: ListViewModelProtocol {
         $todoInput
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .sink { [weak self] string in
-                guard let weakSelf = self else { return }
+                guard let weakSelf = self,
+                      let todo = weakSelf.todos.first?.title,
+                      let category = weakSelf.categories.first
+                else { return }
                 if weakSelf.suggestionMode == .category &&
                     (string.last == Character(" ") || !string.contains("@"))
                 {
                     weakSelf.suggestionMode = .todo
+                    // weakSelf.suggestion_todos_selection = todo
                     return
                 }
                 if string.last == Character("@") {
                     weakSelf.suggestionMode = .category
-                    print("Switch suggestion")
+                    // weakSelf.suggestion_todos_selection = category
                 }
             }
             .store(in: &cancellable)

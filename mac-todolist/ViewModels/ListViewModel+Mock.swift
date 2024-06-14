@@ -23,6 +23,12 @@ class MockListViewModel: ListViewModelProtocol {
      
     @Published var suggestion_todos_selection: String = ""
     
+    @Published var todoSelection: String = ""
+    
+    @Published var showTodoDropdown: Bool = false
+    
+    @Published var dropdownSelection: String = ""
+    
     var suggestions: [String] {
         switch suggestionMode {
         case .todo:
@@ -66,5 +72,4 @@ class MockListViewModel: ListViewModelProtocol {
         
         populateData()
     }
-    
 }

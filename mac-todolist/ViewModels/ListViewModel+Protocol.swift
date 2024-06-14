@@ -23,7 +23,23 @@ protocol ListViewModelProtocol: ObservableObject {
     var filteredCategoriesSuggestions: [String] { get }
     var filteredTodos: [TodoItem] { get }
     
+    var todoSelection: String { get set }
+    
+    var showTodoDropdown: Bool { get set }
+    var dropdownSelection: String { get set }
+    
     func handleSuggestion()
+    
+    func handleCategoryDropdownSelection()
+}
+
+extension ListViewModelProtocol {
+    func handleCategoryDropdownSelection() {
+        guard showTodoDropdown else { return }
+        
+        selectedCategory = dropdownSelection
+        showTodoDropdown.toggle()
+    }
 }
 
 
@@ -55,5 +71,6 @@ extension ListViewModelProtocol {
         
         guard let randomCategory = categories.randomElement() else { return }
         selectedCategory = randomCategory
+        dropdownSelection = randomCategory
     }
 }

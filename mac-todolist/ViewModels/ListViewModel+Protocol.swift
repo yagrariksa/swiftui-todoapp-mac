@@ -31,6 +31,8 @@ protocol ListViewModelProtocol: ObservableObject {
     func handleSuggestion()
     
     func handleCategoryDropdownSelection()
+    
+    func createNewTodo()
 }
 
 extension ListViewModelProtocol {
@@ -39,6 +41,13 @@ extension ListViewModelProtocol {
         
         selectedCategory = dropdownSelection
         showTodoDropdown.toggle()
+    }
+    
+    func createNewTodo() {
+        guard todoInput != "" && !todoInput.isEmpty else { return }
+        
+        todos.insert(.init(title: todoInput, category: selectedCategory), at: 0)
+        todoInput = ""
     }
 }
 

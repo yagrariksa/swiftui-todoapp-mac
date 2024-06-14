@@ -35,9 +35,6 @@ struct ListView<ViewModel>: View where ViewModel: ListViewModelProtocol {
                 }.zIndex(1)
             }
         }
-        .onChange(of: focusView) { oldValue, newValue in
-            print("⚪️\(newValue)")
-        }
     }
     
     
@@ -165,6 +162,11 @@ extension ListView {
             return .handled
         case .downArrow:
             focusView = (viewModel.todoInput == "" || (viewModel.suggestions.count == 0 && viewModel.suggestionMode == .todo)) ? .todo : .suggestion
+            return .handled
+        case .return:
+            withAnimation {
+                viewModel.createNewTodo()
+            }
             return .handled
         default:
             return .ignored
